@@ -1,0 +1,83 @@
+<!-- Include JSZip library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+
+<!-- Add a button to initiate the zip creation -->
+
+<div class="pull-left"><button class="btn btn--ys btn--xxl" onclick="createZip()">Download All Images as Zip</button></div>
+
+{% for image in product.media %}
+  {% assign image_url = image | image_url: width: 2500 %}
+  <div>
+    <img class="image-element" src="{{- image_url -}}" style="display: none;">
+  </div>
+{% endfor %}
+
+<script>
+  async function createZip() {
+    // Initialize a new JSZip instance
+    var zip = new JSZip();
+
+    try {
+      // Create an array to store all the image fetch promises
+      var promises = [];
+
+      // Global variable to keep track of the image index
+      var imageIndex = 0;
+
+      // Get all the image elements with the class "image-element"
+      var imageElements = document.querySelectorAll('.image-element');
+
+      // Get the product name and convert it to lowercase with dashes
+      var productName = "{{ product.title | handleize }}";
+
+      // Loop through the image elements and fetch each image
+      imageElements.forEach(imageElement => {
+        var imageUrl = imageElement.src;
+        // Remove the query parameter from the image URL
+        var imageUrlWithoutQuery = imageUrl.split('?')[0];
+
+        // Extract the filename from the image URL and add the appropriate extension
+        var fileExtension = imageUrlWithoutQuery.split('.').pop();
+        var filename =  productName + '_' + imageIndex + '.' + fileExtension;
+
+        var promise = fetch(imageUrl)
+          .then(response => response.blob())
+          .then(blob => {
+            // Add the image to the zip with the given filename
+            zip.file(filename, blob);
+            console.log('Added image:', filename); // Output the filename to console for verification
+          })
+          .catch(error => {
+            console.error('Error fetching image:', imageUrl, error);
+          });
+
+        promises.push(promise);
+        imageIndex++; // Increment the image index
+      });
+
+      // Wait for all the images to be fetched and added to the zip
+      await Promise.all(promises);
+
+      console.log('All images added to the zip. Generating the zip file...');
+
+      // Generate the zip file and download
+      zip.generateAsync({ type: 'blob' }).then(function (content) {
+        // Create a temporary anchor element
+        var link = document.createElement('a');
+        link.download = productName + '.zip'; // Set the download filename
+        link.href = URL.createObjectURL(content);
+
+        // Trigger a click on the anchor element to download the file
+        link.click();
+
+        // Clean up the temporary anchor element
+        setTimeout(function () {
+          URL.revokeObjectURL(link.href);
+          link.remove();
+        }, 0);
+      });
+    } catch (error) {
+      console.error('Error creating zip:', error);
+    }
+  }
+</script>
