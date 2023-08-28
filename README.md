@@ -6,4 +6,6 @@ Useful on wholesale sites where customers would like a copy of product images.
 
 To use, create a snippet called 'image downloader' and copy code to that snippet.
 
+Adjust code for the theme you are working with; ie button classes.
+
 Decide where you want the download button to display and render the snippet to the product template.
