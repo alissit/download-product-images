@@ -1,7 +1,7 @@
 # download-product-images
 Implement download of product images on  product pages in Shopify
 
-Using JSZip to create a zip download of all product images on a product page in Shopify.
+Using JSZip - https://stuk.github.io/jszip/ - to create a zip download of all product images on a product page in Shopify.
 Useful on wholesale sites where customers would like a copy of product images.
 
 To use, create a snippet called 'image downloader' and copy code to that snippet.
