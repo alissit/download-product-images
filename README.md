@@ -9,3 +9,5 @@ To use, create a snippet called 'image downloader' and copy code to that snippet
 Adjust code for the theme you are working with; ie button classes.
 
 Decide where you want the download button to display and render the snippet to the product template.
+
+The zipped file will be the product handle and the images zipped in the file will have the product handle with sequential numbers to the end of each file name.
